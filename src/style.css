@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+}
+
+#app {
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 24px;
+}
