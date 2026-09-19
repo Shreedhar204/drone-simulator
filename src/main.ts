@@ -1,70 +1,54 @@
+// Entry point: creates the app and wires the drone, views, runner and input together.
 import "./style.css";
-import { Application, Graphics } from "pixi.js";
-
-const GRID_SIZE = 10;
-const CELL = 40;
+import { Application } from "pixi.js";
+import { GRID_SIZE, CELL } from "./config";
+import { Drone } from "./Drone";
+import { GridView } from "./GridView";
+import { DroneView } from "./DroneView";
+import { CommandRunner } from "./CommandRunner";
+import type { Command } from "./CommandRunner";
 
 async function main() {
   const app = new Application();
-
   await app.init({
     width: GRID_SIZE * CELL,
     height: GRID_SIZE * CELL,
     backgroundColor: 0x222222,
-    // resizeTo: window,
   });
+  document.getElementById("grid")?.appendChild(app.canvas);
 
-  document.getElementById("app")?.appendChild(app.canvas);
+  const drone = new Drone();
+  const droneView = new DroneView(drone);
+  app.stage.addChild(new GridView().display, droneView.display);
 
-  // Draw grid lines
-  const grid = new Graphics();
-  for (let i = 0; i <= GRID_SIZE; i++) {
-    grid.moveTo(i * CELL, 0).lineTo(i * CELL, GRID_SIZE * CELL);
-    grid.moveTo(0, i * CELL).lineTo(GRID_SIZE * CELL, i * CELL);
-  }
-  grid.stroke({ width: 1, color: 0x444444 });
-  app.stage.addChild(grid);
+  // temporary: hardcoded commands (the spec's example c) until the control panel builds them
+  const commands: Command[] = [
+    { type: "PLACE", x: 1, y: 2, facing: "EAST" },
+    { type: "MOVE" },
+    { type: "MOVE" },
+    { type: "LEFT" },
+    { type: "MOVE" },
+    { type: "ATTACK" },
+    { type: "REPORT" },
+  ];
 
-  // drone for now
-  let x = 0;
-  let y = 0;
-  const drone = new Graphics();
-  drone
-    .moveTo(0, -14) // nose point, pointing up (north) by default
-    .lineTo(10, 10) // back-right corner
-    .lineTo(-10, 10) // back-left corner
-    .closePath()
-    .fill(0xff5555);
-  app.stage.addChild(drone);
+  const playButton = document.getElementById("play") as HTMLButtonElement;
 
-  function render() {
-    drone.x = x * CELL + CELL / 2;
-    drone.y = (GRID_SIZE - 1 - y) * CELL + CELL / 2;
-  }
-  render();
+  const runner = new CommandRunner(
+    drone,
+    () => droneView.render(),
+    (state) => {
+      playButton.disabled = state === "executing";
+    },
+  );
+  playButton.addEventListener("click", () => runner.run(commands));
 
-  // boundry logic
-  function tryMove(dx: number, dy: number) {
-    const newX = x + dx;
-    const newY = y + dy;
-
-    if (newX < 0 || newX >= GRID_SIZE || newY < 0 || newY >= GRID_SIZE) {
-      return; // illegal move: ignored, position unchanged
-    }
-
-    x = newX;
-    y = newY;
-    render();
-  }
-
-  // commands
-
-  // One key press = one grid step (not held-down continuous movement)
   window.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowLeft") tryMove(-1, 0);
-    if (e.key === "ArrowRight") tryMove(1, 0);
-    if (e.key === "ArrowUp") tryMove(0, 1);
-    if (e.key === "ArrowDown") tryMove(0, -1);
+    if (e.key === "ArrowUp") drone.move();
+    if (e.key === "ArrowLeft") drone.left();
+    if (e.key === "ArrowRight") drone.right();
+    if (e.key === " ") drone.attack();
+    droneView.render();
   });
 }
 
