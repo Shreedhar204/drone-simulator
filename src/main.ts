@@ -29,14 +29,19 @@ async function main() {
   let x = 0;
   let y = 0;
   const drone = new Graphics();
-  drone.rect(2, 2, CELL - 4, CELL - 4).fill(0xff5555);
+  drone
+    .moveTo(0, -14) // nose point, pointing up (north) by default
+    .lineTo(10, 10) // back-right corner
+    .lineTo(-10, 10) // back-left corner
+    .closePath()
+    .fill(0xff5555);
   app.stage.addChild(drone);
 
   function render() {
-    drone.x = x * CELL;
-    drone.y = (GRID_SIZE - 1 - y) * CELL;
+    drone.x = x * CELL + CELL / 2;
+    drone.y = (GRID_SIZE - 1 - y) * CELL + CELL / 2;
   }
-  // render();
+  render();
 
   // boundry logic
   function tryMove(dx: number, dy: number) {
