@@ -10,9 +10,60 @@
       <div id="grid"></div>
       <section class="panel">
         <h2 class="panel__title">Control Panel</h2>
-        <button id="play" class="btn" type="button">Play</button>
+
+        <div class="group">
+          <h3 class="group__label">Commands</h3>
+          <div class="cmd-grid">
+            <button id="place" class="btn btn--secondary" type="button">Place</button>
+            <button id="cmd-attack" class="btn btn--secondary" type="button" disabled>Attack</button>
+            <button id="cmd-report" class="btn btn--secondary" type="button" disabled>Report</button>
+            <button id="cmd-left" class="btn btn--secondary" type="button" disabled>Left</button>
+            <button id="cmd-move" class="btn btn--secondary" type="button" disabled>Move</button>
+            <button id="cmd-right" class="btn btn--secondary" type="button" disabled>Right</button>
+          </div>
+        </div>
+
+        <div class="group group--grow">
+          <div class="group__head">
+            <label class="group__label" for="program">Program</label>
+            <div class="group__actions">
+              <button id="delete" class="btn btn--secondary btn--small" type="button" disabled>Delete last</button>
+              <button id="clear" class="btn btn--secondary btn--small" type="button" disabled>Clear</button>
+            </div>
+          </div>
+          <textarea id="program" class="program" readonly placeholder="Place the drone to start"></textarea>
+        </div>
+
+        <button id="play" class="btn" type="button" disabled>Play</button>
       </section>
     </div>
+
+    <dialog id="place-dialog" class="dialog">
+      <form method="dialog">
+        <h3 class="dialog__title">Place drone</h3>
+        <div class="dialog__fields">
+          <label class="field">X
+            <input id="place-x" type="number" inputmode="numeric" min="0" max="9" value="0" required />
+          </label>
+          <label class="field">Y
+            <input id="place-y" type="number" inputmode="numeric" min="0" max="9" value="0" required />
+          </label>
+          <label class="field field--wide">Facing
+            <select id="place-facing">
+              <option>NORTH</option>
+              <option>EAST</option>
+              <option>SOUTH</option>
+              <option>WEST</option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <button id="place-cancel" class="btn btn--secondary" type="button">Cancel</button>
+          <button class="btn" type="submit" value="confirm">Confirm</button>
+        </div>
+      </form>
+    </dialog>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

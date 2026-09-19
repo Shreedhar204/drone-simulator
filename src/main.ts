@@ -1,4 +1,4 @@
-// Entry point: creates the app and wires the drone, views, runner and input together.
+// Entry point: creates the app and wires the drone, views, runner and control panel together.
 import "./style.css";
 import { Application } from "pixi.js";
 import { GRID_SIZE, CELL } from "./config";
@@ -6,7 +6,7 @@ import { Drone } from "./Drone";
 import { GridView } from "./GridView";
 import { DroneView } from "./DroneView";
 import { CommandRunner } from "./CommandRunner";
-import type { Command } from "./CommandRunner";
+import { ControlPanel } from "./ControlPanel";
 
 async function main() {
   const app = new Application();
@@ -21,27 +21,12 @@ async function main() {
   const droneView = new DroneView(drone);
   app.stage.addChild(new GridView().display, droneView.display);
 
-  // temporary: hardcoded commands (the spec's example c) until the control panel builds them
-  const commands: Command[] = [
-    { type: "PLACE", x: 1, y: 2, facing: "EAST" },
-    { type: "MOVE" },
-    { type: "MOVE" },
-    { type: "LEFT" },
-    { type: "MOVE" },
-    { type: "ATTACK" },
-    { type: "REPORT" },
-  ];
-
-  const playButton = document.getElementById("play") as HTMLButtonElement;
-
   const runner = new CommandRunner(
     drone,
     () => droneView.render(),
-    (state) => {
-      playButton.disabled = state === "executing";
-    },
+    (state) => panel.setRunning(state === "executing"),
   );
-  playButton.addEventListener("click", () => runner.run(commands));
+  const panel = new ControlPanel((commands) => runner.run(commands));
 
   window.addEventListener("keydown", (e) => {
     if (e.key === "ArrowUp") drone.move();
