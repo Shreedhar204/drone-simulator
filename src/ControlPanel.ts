@@ -47,6 +47,7 @@ export class ControlPanel {
     }
 
     this.placeButton.addEventListener("click", () => {
+      this.dialog.querySelector("form")?.reset();
       this.dialog.returnValue = ""; // stops a stale "confirm" being reused after Esc
       this.dialog.showModal();
     });
