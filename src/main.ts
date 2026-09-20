@@ -7,6 +7,7 @@ import { GridView } from "./GridView";
 import { DroneView } from "./DroneView";
 import { CommandRunner } from "./CommandRunner";
 import { ControlPanel } from "./ControlPanel";
+import { ReportLog } from "./ReportLog";
 
 async function main() {
   const app = new Application();
@@ -22,9 +23,14 @@ async function main() {
   const droneView = await DroneView.create(drone);
   app.stage.addChild(new GridView().display, droneView.display);
 
+  const reportLog = new ReportLog();
+
   const runner = new CommandRunner(drone, {
-    onStateChange: (state) => panel.setRunning(state === "executing"),
-    onReport: (text) => console.log(text),
+    onStateChange: (state) => {
+      panel.setRunning(state === "executing");
+      if (state === "executing") reportLog.clear();
+    },
+    onReport: (text) => reportLog.add(text),
     onTakeOff: () => droneView.takeOff(),
     onLand: () => droneView.land(),
     waitForMotion: () => droneView.waitForMotion(),

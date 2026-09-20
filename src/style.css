@@ -12,7 +12,7 @@ body {
 }
 
 #app {
-  --board: min(100%, 400px, 100dvh - 90px);
+  --board: min(100%, 400px, 100dvh - 220px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -23,7 +23,8 @@ body {
 }
 
 #grid,
-#open-panel {
+#open-panel,
+.report {
   width: var(--board);
 }
 
@@ -197,4 +198,28 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.report {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: rgb(0 0 0 / 0.55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 12px;
+}
+
+.report__log {
+  height: 5rem;
+  overflow-y: auto;
+  white-space: pre-line;
+  font-family: ui-monospace, monospace;
+}
+
+.report__log:empty::before {
+  content: "Reports will appear here";
+  color: #999;
 }

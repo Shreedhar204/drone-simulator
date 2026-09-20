@@ -2,7 +2,7 @@
 import { GRID_SIZE } from "./config";
 
 export type Facing = "NORTH" | "EAST" | "SOUTH" | "WEST";
-const ORDER: Facing[] = ["NORTH", "EAST", "SOUTH", "WEST"];
+const CARDINAL_DIRECTIONS_ORDER: Facing[] = ["NORTH", "EAST", "SOUTH", "WEST"];
 const STEP: Record<Facing, { dx: number; dy: number }> = {
   NORTH: { dx: 0, dy: 1 },
   EAST: { dx: 1, dy: 0 },
@@ -59,7 +59,7 @@ export class Drone {
 
   private rotate(step: number) {
     if (!this.placed) return;
-    const i = ORDER.indexOf(this.facing);
-    this.facing = ORDER[(i + step + 4) % 4];
+    const i = CARDINAL_DIRECTIONS_ORDER.indexOf(this.facing);
+    this.facing = CARDINAL_DIRECTIONS_ORDER[(i + step + 4) % 4];
   }
 }

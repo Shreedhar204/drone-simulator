@@ -20,7 +20,7 @@ export type RunnerHooks = {
   waitForMotion: () => Promise<boolean>;
 };
 
-const IDLE_BEAT_MS = 500; // pause for commands with nothing to animate (REPORT, ATTACK, blocked MOVE)
+const IDLE_BEAT_MS = 500; // pause for commands with nothing to animate (ATTACK, blocked MOVE)
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 export class CommandRunner {
@@ -45,7 +45,7 @@ export class CommandRunner {
           await this.hooks.onTakeOff();
         } else {
           const moved = await this.hooks.waitForMotion();
-          if (!moved) await sleep(IDLE_BEAT_MS);
+          if (!moved && command.type !== "REPORT") await sleep(IDLE_BEAT_MS);
         }
       }
     } finally {
