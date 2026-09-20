@@ -18,16 +18,10 @@ const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 export class CommandRunner {
   state: RunnerState = "idle";
   private drone: Drone;
-  private render: () => void;
   private onStateChange: (state: RunnerState) => void;
 
-  constructor(
-    drone: Drone,
-    render: () => void,
-    onStateChange: (state: RunnerState) => void,
-  ) {
+  constructor(drone: Drone, onStateChange: (state: RunnerState) => void) {
     this.drone = drone;
-    this.render = render;
     this.onStateChange = onStateChange;
   }
 
@@ -37,7 +31,6 @@ export class CommandRunner {
     try {
       for (const command of commands) {
         this.execute(command);
-        this.render();
         await sleep(STEP_DELAY_MS);
       }
     } finally {

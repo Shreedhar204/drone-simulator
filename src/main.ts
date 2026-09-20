@@ -21,20 +21,20 @@ async function main() {
   const droneView = new DroneView(drone);
   app.stage.addChild(new GridView().display, droneView.display);
 
-  const runner = new CommandRunner(
-    drone,
-    () => droneView.render(),
-    (state) => panel.setRunning(state === "executing"),
+  const runner = new CommandRunner(drone, (state) =>
+    panel.setRunning(state === "executing"),
   );
   const panel = new ControlPanel((commands) => runner.run(commands));
 
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowUp") drone.move();
-    if (e.key === "ArrowLeft") drone.left();
-    if (e.key === "ArrowRight") drone.right();
-    if (e.key === " ") drone.attack();
-    droneView.render();
-  });
+  // window.addEventListener("keydown", (e) => {
+  //   if (e.key === "ArrowUp") drone.move();
+  //   if (e.key === "ArrowLeft") drone.left();
+  //   if (e.key === "ArrowRight") drone.right();
+  //   if (e.key === " ") drone.attack();
+  //   droneView.render();
+  // });
+
+  app.ticker.add((ticker) => droneView.update(ticker.deltaMS));
 }
 
 main();
