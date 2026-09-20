@@ -19,10 +19,16 @@ export class CommandRunner {
   state: RunnerState = "idle";
   private drone: Drone;
   private onStateChange: (state: RunnerState) => void;
+  private onReport: (text: string) => void;
 
-  constructor(drone: Drone, onStateChange: (state: RunnerState) => void) {
+  constructor(
+    drone: Drone,
+    onStateChange: (state: RunnerState) => void,
+    onReport: (text: string) => void,
+  ) {
     this.drone = drone;
     this.onStateChange = onStateChange;
+    this.onReport = onReport;
   }
 
   async run(commands: Command[]) {
@@ -55,8 +61,11 @@ export class CommandRunner {
       case "ATTACK":
         this.drone.attack();
         break;
-      case "REPORT":
-        break; // output handling comes later
+      case "REPORT": {
+        const report = this.drone.report();
+        if (report) this.onReport(report);
+        break;
+      }
     }
   }
 

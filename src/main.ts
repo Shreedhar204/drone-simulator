@@ -21,8 +21,10 @@ async function main() {
   const droneView = new DroneView(drone);
   app.stage.addChild(new GridView().display, droneView.display);
 
-  const runner = new CommandRunner(drone, (state) =>
-    panel.setRunning(state === "executing"),
+  const runner = new CommandRunner(
+    drone,
+    (state) => panel.setRunning(state === "executing"),
+    (text) => console.log(text),
   );
   const panel = new ControlPanel((commands) => runner.run(commands));
 
