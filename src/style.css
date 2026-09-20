@@ -6,7 +6,7 @@
 
 body {
   margin: 0;
-  background: #141414;
+  background: #0f1a0a url("./assets/drone/arena-portrait.jpg") center / cover no-repeat;
   color: #eee;
   font-family: system-ui, sans-serif;
 }

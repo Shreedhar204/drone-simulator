@@ -13,7 +13,8 @@ async function main() {
   await app.init({
     width: GRID_SIZE * CELL,
     height: GRID_SIZE * CELL,
-    backgroundColor: 0x222222,
+    backgroundAlpha: 0,
+    resolution: window.devicePixelRatio,
   });
   document.getElementById("grid")?.appendChild(app.canvas);
 
