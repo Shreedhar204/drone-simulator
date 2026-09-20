@@ -12,34 +12,42 @@ export type Command =
 
 export type RunnerState = "idle" | "executing";
 
+export type RunnerHooks = {
+  onStateChange: (state: RunnerState) => void;
+  onReport: (text: string) => void;
+  onTakeOff: () => Promise<void>;
+  onLand: () => Promise<void>;
+};
+
 const STEP_DELAY_MS = 1000;
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 export class CommandRunner {
   state: RunnerState = "idle";
   private drone: Drone;
-  private onStateChange: (state: RunnerState) => void;
-  private onReport: (text: string) => void;
+  private hooks: RunnerHooks;
 
-  constructor(
-    drone: Drone,
-    onStateChange: (state: RunnerState) => void,
-    onReport: (text: string) => void,
-  ) {
+  constructor(drone: Drone, hooks: RunnerHooks) {
     this.drone = drone;
-    this.onStateChange = onStateChange;
-    this.onReport = onReport;
+    this.hooks = hooks;
   }
 
   async run(commands: Command[]) {
     if (this.state !== "idle") return;
     this.setState("executing");
+    let airborne = false;
     try {
       for (const command of commands) {
         this.execute(command);
-        await sleep(STEP_DELAY_MS);
+        if (!airborne && command.type === "PLACE" && this.drone.placed) {
+          airborne = true;
+          await this.hooks.onTakeOff();
+        } else {
+          await sleep(STEP_DELAY_MS);
+        }
       }
     } finally {
+      if (airborne) await this.hooks.onLand();
       this.setState("idle");
     }
   }
@@ -63,7 +71,7 @@ export class CommandRunner {
         break;
       case "REPORT": {
         const report = this.drone.report();
-        if (report) this.onReport(report);
+        if (report) this.hooks.onReport(report);
         break;
       }
     }
@@ -71,6 +79,6 @@ export class CommandRunner {
 
   private setState(state: RunnerState) {
     this.state = state;
-    this.onStateChange(state);
+    this.hooks.onStateChange(state);
   }
 }

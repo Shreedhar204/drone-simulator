@@ -18,14 +18,15 @@ async function main() {
   document.getElementById("grid")?.appendChild(app.canvas);
 
   const drone = new Drone();
-  const droneView = new DroneView(drone);
+  const droneView = await DroneView.create(drone);
   app.stage.addChild(new GridView().display, droneView.display);
 
-  const runner = new CommandRunner(
-    drone,
-    (state) => panel.setRunning(state === "executing"),
-    (text) => console.log(text),
-  );
+  const runner = new CommandRunner(drone, {
+    onStateChange: (state) => panel.setRunning(state === "executing"),
+    onReport: (text) => console.log(text),
+    onTakeOff: () => droneView.takeOff(),
+    onLand: () => droneView.land(),
+  });
   const panel = new ControlPanel((commands) => runner.run(commands));
 
   // window.addEventListener("keydown", (e) => {
