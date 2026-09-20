@@ -14,7 +14,8 @@ const ANGLE: Record<Facing, number> = {
   WEST: (3 * Math.PI) / 2,
 };
 
-const SMOOTHING_MS = 80;
+const MOVE_SPEED = CELL * 2.5; // pixels per second (2.5 cells per second)
+const TURN_SPEED = Math.PI * 1.5; // radians per second (a 90° turn takes ~0.33s)
 const SNAP_DISTANCE = CELL * 1.5;
 const DRONE_SIZE = CELL * 1.2;
 const LANDED_SCALE = 0.8; // resting size; full size when airborne
@@ -35,6 +36,7 @@ export class DroneView {
     elapsed: number;
     done: () => void;
   } | null = null;
+  private motionWaiters: Array<() => void> = [];
 
   static async create(drone: Drone) {
     // mipmaps keep the 512px art smooth when it is drawn at ~48px
@@ -70,6 +72,14 @@ export class DroneView {
     return this.startTransition("land");
   }
 
+  // Resolves true once the drone has finished moving/turning; false straight away if there's nothing to animate.
+  waitForMotion(): Promise<boolean> {
+    if (!this.drone.placed || this.atTarget()) return Promise.resolve(false);
+    return new Promise((resolve) => {
+      this.motionWaiters.push(() => resolve(true));
+    });
+  }
+
   snap() {
     const { x, y, rotation } = this.target();
     this.display.visible = this.drone.placed;
@@ -84,15 +94,44 @@ export class DroneView {
     if (this.transition) this.advanceTransition(deltaMS);
 
     const { x, y, rotation } = this.target();
-    if (Math.hypot(x - this.display.x, y - this.display.y) > SNAP_DISTANCE) {
-      return this.snap();
+    const dx = x - this.display.x;
+    const dy = y - this.display.y;
+    const distance = Math.hypot(dx, dy);
+    if (distance > SNAP_DISTANCE) return this.snap();
+
+    const seconds = deltaMS / 1000;
+    const step = MOVE_SPEED * seconds;
+    if (distance <= step) {
+      this.display.x = x;
+      this.display.y = y;
+    } else {
+      this.display.x += (dx / distance) * step;
+      this.display.y += (dy / distance) * step;
     }
 
-    const t = 1 - Math.exp(-deltaMS / SMOOTHING_MS);
-    const diff = rotation - this.display.rotation;
-    this.display.x += (x - this.display.x) * t;
-    this.display.y += (y - this.display.y) * t;
-    this.display.rotation += Math.atan2(Math.sin(diff), Math.cos(diff)) * t;
+    const diff = Math.atan2(
+      Math.sin(rotation - this.display.rotation),
+      Math.cos(rotation - this.display.rotation),
+    );
+    const turn = TURN_SPEED * seconds;
+    if (Math.abs(diff) <= turn) this.display.rotation = rotation;
+    else this.display.rotation += Math.sign(diff) * turn;
+
+    if (this.atTarget()) {
+      for (const done of this.motionWaiters.splice(0)) done();
+    }
+  }
+
+  private atTarget() {
+    const { x, y, rotation } = this.target();
+    const diff = Math.atan2(
+      Math.sin(rotation - this.display.rotation),
+      Math.cos(rotation - this.display.rotation),
+    );
+    return (
+      Math.hypot(x - this.display.x, y - this.display.y) < 0.01 &&
+      Math.abs(diff) < 0.001
+    );
   }
 
   private startTransition(kind: TransitionKind) {

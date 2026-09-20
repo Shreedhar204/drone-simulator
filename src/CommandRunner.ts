@@ -17,9 +17,10 @@ export type RunnerHooks = {
   onReport: (text: string) => void;
   onTakeOff: () => Promise<void>;
   onLand: () => Promise<void>;
+  waitForMotion: () => Promise<boolean>;
 };
 
-const STEP_DELAY_MS = 1000;
+const IDLE_BEAT_MS = 500; // pause for commands with nothing to animate (REPORT, ATTACK, blocked MOVE)
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 export class CommandRunner {
@@ -43,7 +44,8 @@ export class CommandRunner {
           airborne = true;
           await this.hooks.onTakeOff();
         } else {
-          await sleep(STEP_DELAY_MS);
+          const moved = await this.hooks.waitForMotion();
+          if (!moved) await sleep(IDLE_BEAT_MS);
         }
       }
     } finally {

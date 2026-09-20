@@ -27,6 +27,7 @@ async function main() {
     onReport: (text) => console.log(text),
     onTakeOff: () => droneView.takeOff(),
     onLand: () => droneView.land(),
+    waitForMotion: () => droneView.waitForMotion(),
   });
   const panel = new ControlPanel((commands) => runner.run(commands));
 
