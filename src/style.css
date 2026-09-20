@@ -12,17 +12,18 @@ body {
 }
 
 #app {
-  --board: min(100%, 400px, 42dvh);
+  --board: min(100%, 400px, 100dvh - 90px);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
   gap: 12px;
-  height: 100dvh;
   padding: 12px 16px;
 }
 
 #grid,
-.panel {
+#open-panel {
   width: var(--board);
 }
 
@@ -34,18 +35,6 @@ body {
   display: block;
   width: 100%;
   height: auto;
-}
-
-.panel {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 12px;
-  background: #1e1e1e;
-  border: 1px solid #333;
-  border-radius: 12px;
 }
 
 .panel__title {
@@ -60,11 +49,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
-}
-
-.group--grow {
-  flex: 1;
-  min-height: 0;
 }
 
 .group__head {
@@ -116,9 +100,8 @@ textarea {
 }
 
 .program {
-  flex: 1;
-  min-height: 0;
   width: 100%;
+  height: 7rem;
   resize: none;
   font-family: ui-monospace, monospace;
 }
@@ -197,4 +180,21 @@ textarea {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   margin-bottom: 16px;
+}
+
+.panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dialog--panel {
+  width: min(92vw, 400px);
+}
+
+.dialog--panel[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }

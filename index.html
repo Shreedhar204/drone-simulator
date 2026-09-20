@@ -8,35 +8,40 @@
   <body>
     <div id="app">
       <div id="grid"></div>
-      <section class="panel">
-        <h2 class="panel__title">Control Panel</h2>
-
-        <div class="group">
-          <h3 class="group__label">Commands</h3>
-          <div class="cmd-grid">
-            <button id="place" class="btn btn--secondary" type="button">Place</button>
-            <button id="cmd-attack" class="btn btn--secondary" type="button" disabled>Attack</button>
-            <button id="cmd-report" class="btn btn--secondary" type="button" disabled>Report</button>
-            <button id="cmd-left" class="btn btn--secondary" type="button" disabled>Left</button>
-            <button id="cmd-move" class="btn btn--secondary" type="button" disabled>Move</button>
-            <button id="cmd-right" class="btn btn--secondary" type="button" disabled>Right</button>
-          </div>
-        </div>
-
-        <div class="group group--grow">
-          <div class="group__head">
-            <label class="group__label" for="program">Program</label>
-            <div class="group__actions">
-              <button id="delete" class="btn btn--secondary btn--small" type="button" disabled>Delete last</button>
-              <button id="clear" class="btn btn--secondary btn--small" type="button" disabled>Clear</button>
-            </div>
-          </div>
-          <textarea id="program" class="program" readonly placeholder="Place the drone to start"></textarea>
-        </div>
-
-        <button id="play" class="btn" type="button" disabled>Play</button>
-      </section>
+      <button id="open-panel" class="btn" type="button">Control Panel</button>
     </div>
+
+    <dialog id="control-dialog" class="dialog dialog--panel">
+      <div class="panel__head">
+        <h2 class="panel__title">Control Panel</h2>
+        <button id="panel-close" class="btn btn--secondary btn--small" type="button">Close</button>
+      </div>
+
+      <div class="group">
+        <h3 class="group__label">Commands</h3>
+        <div class="cmd-grid">
+          <button id="place" class="btn btn--secondary" type="button">Place</button>
+          <button id="cmd-attack" class="btn btn--secondary" type="button" disabled>Attack</button>
+          <button id="cmd-report" class="btn btn--secondary" type="button" disabled>Report</button>
+          <button id="cmd-left" class="btn btn--secondary" type="button" disabled>Left</button>
+          <button id="cmd-move" class="btn btn--secondary" type="button" disabled>Move</button>
+          <button id="cmd-right" class="btn btn--secondary" type="button" disabled>Right</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group__head">
+          <label class="group__label" for="program">Program</label>
+          <div class="group__actions">
+            <button id="delete" class="btn btn--secondary btn--small" type="button" disabled>Delete last</button>
+            <button id="clear" class="btn btn--secondary btn--small" type="button" disabled>Clear</button>
+          </div>
+        </div>
+        <textarea id="program" class="program" readonly placeholder="Place the drone to start"></textarea>
+      </div>
+
+      <button id="play" class="btn" type="button" disabled>Play</button>
+    </dialog>
 
     <dialog id="place-dialog" class="dialog">
       <form method="dialog">

@@ -1,4 +1,4 @@
-// Wires the control panel DOM (buttons, place dialog, program box) and builds the command list from user input.
+// Wires the control panel DOM (panel + place dialogs, buttons, program box) and builds the command list from user input.
 import type { Command } from "./CommandRunner";
 import type { Facing } from "./Drone";
 
@@ -25,12 +25,15 @@ export class ControlPanel {
   private running = false;
   private onPlay: (commands: Command[]) => void;
 
+  private openButton = byId<HTMLButtonElement>("open-panel");
+  private panelDialog = byId<HTMLDialogElement>("control-dialog");
+  private closeButton = byId<HTMLButtonElement>("panel-close");
   private placeButton = byId<HTMLButtonElement>("place");
   private deleteButton = byId<HTMLButtonElement>("delete");
   private clearButton = byId<HTMLButtonElement>("clear");
   private playButton = byId<HTMLButtonElement>("play");
   private program = byId<HTMLTextAreaElement>("program");
-  private dialog = byId<HTMLDialogElement>("place-dialog");
+  private placeDialog = byId<HTMLDialogElement>("place-dialog");
   private cancelButton = byId<HTMLButtonElement>("place-cancel");
   private placeX = byId<HTMLInputElement>("place-x");
   private placeY = byId<HTMLInputElement>("place-y");
@@ -40,6 +43,12 @@ export class ControlPanel {
   constructor(onPlay: (commands: Command[]) => void) {
     this.onPlay = onPlay;
 
+    this.openButton.addEventListener("click", () => {
+      this.panelDialog.showModal();
+      this.program.scrollTop = this.program.scrollHeight;
+    });
+    this.closeButton.addEventListener("click", () => this.panelDialog.close());
+
     for (const [id, type] of SIMPLE_BUTTONS) {
       const button = byId<HTMLButtonElement>(id);
       this.commandButtons.push(button);
@@ -47,15 +56,15 @@ export class ControlPanel {
     }
 
     this.placeButton.addEventListener("click", () => {
-      this.dialog.querySelector("form")?.reset();
-      this.dialog.returnValue = ""; // stops a stale "confirm" being reused after Esc
-      this.dialog.showModal();
+      this.placeDialog.querySelector("form")?.reset();
+      this.placeDialog.returnValue = ""; // stops a stale "confirm" being reused after Esc
+      this.placeDialog.showModal();
     });
     this.cancelButton.addEventListener("click", () =>
-      this.dialog.close("cancel"),
+      this.placeDialog.close("cancel"),
     );
-    this.dialog.addEventListener("close", () => {
-      if (this.dialog.returnValue !== "confirm") return;
+    this.placeDialog.addEventListener("close", () => {
+      if (this.placeDialog.returnValue !== "confirm") return;
       this.add({
         type: "PLACE",
         x: this.placeX.valueAsNumber,
@@ -72,9 +81,10 @@ export class ControlPanel {
       this.commands = [];
       this.refresh();
     });
-    this.playButton.addEventListener("click", () =>
-      this.onPlay([...this.commands]),
-    );
+    this.playButton.addEventListener("click", () => {
+      this.panelDialog.close();
+      this.onPlay([...this.commands]);
+    });
 
     this.refresh();
   }
@@ -93,6 +103,7 @@ export class ControlPanel {
     const locked = this.running;
     const empty = this.commands.length === 0;
 
+    this.openButton.disabled = locked;
     this.placeButton.disabled = locked;
     for (const button of this.commandButtons) button.disabled = locked || empty;
     this.deleteButton.disabled = locked || empty;
