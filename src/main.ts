@@ -5,6 +5,7 @@ import { GRID_SIZE, CELL } from "./config";
 import { Drone } from "./Drone";
 import { GridView } from "./GridView";
 import { DroneView } from "./DroneView";
+import { AttackView } from "./AttackView";
 import { CommandRunner } from "./CommandRunner";
 import { ControlPanel } from "./ControlPanel";
 import { ReportLog } from "./ReportLog";
@@ -21,7 +22,12 @@ async function main() {
 
   const drone = new Drone();
   const droneView = await DroneView.create(drone);
-  app.stage.addChild(new GridView().display, droneView.display);
+  const attackView = await AttackView.create();
+  app.stage.addChild(
+    new GridView().display,
+    droneView.display,
+    attackView.display,
+  );
 
   const reportLog = new ReportLog();
 
@@ -33,6 +39,7 @@ async function main() {
     onReport: (text) => reportLog.add(text),
     onTakeOff: () => droneView.takeOff(),
     onLand: () => droneView.land(),
+    onAttack: (from, to) => attackView.fire(from, to),
     waitForMotion: () => droneView.waitForMotion(),
   });
   const panel = new ControlPanel((commands) => runner.run(commands));
@@ -45,7 +52,10 @@ async function main() {
   //   droneView.render();
   // });
 
-  app.ticker.add((ticker) => droneView.update(ticker.deltaMS));
+  app.ticker.add((ticker) => {
+    droneView.update(ticker.deltaMS);
+    attackView.update(ticker.deltaMS);
+  });
 }
 
 main();

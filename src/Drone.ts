@@ -2,6 +2,7 @@
 import { GRID_SIZE } from "./config";
 
 export type Facing = "NORTH" | "EAST" | "SOUTH" | "WEST";
+export type Cell = { x: number; y: number };
 const CARDINAL_DIRECTIONS_ORDER: Facing[] = ["NORTH", "EAST", "SOUTH", "WEST"];
 const STEP: Record<Facing, { dx: number; dy: number }> = {
   NORTH: { dx: 0, dy: 1 },
@@ -45,7 +46,7 @@ export class Drone {
   }
 
   // Returns the cell hit, or null if there aren't 2 free spaces ahead.
-  attack(): { x: number; y: number } | null {
+  attack(): Cell | null {
     if (!this.placed) return null;
     const { dx, dy } = STEP[this.facing];
     const tx = this.x + dx * 2;

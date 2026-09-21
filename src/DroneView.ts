@@ -1,7 +1,8 @@
 // Draws the drone sprite (still or spinning) and eases it toward the Drone's state. Rendering only.
 import { Assets, Sprite } from "pixi.js";
 import type { Texture } from "pixi.js";
-import { GRID_SIZE, CELL } from "./config";
+import { CELL } from "./config";
+import { cellCenter } from "./geometry";
 import { Drone } from "./Drone";
 import type { Facing } from "./Drone";
 import stillUrl from "./assets/drone/drone-still.png";
@@ -168,8 +169,7 @@ export class DroneView {
 
   private target() {
     return {
-      x: this.drone.x * CELL + CELL / 2,
-      y: (GRID_SIZE - 1 - this.drone.y) * CELL + CELL / 2,
+      ...cellCenter(this.drone.x, this.drone.y),
       rotation: ANGLE[this.drone.facing],
     };
   }

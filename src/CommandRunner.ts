@@ -1,6 +1,6 @@
 // Runs a list of commands on the drone one step at a time and tracks idle/executing state,
 // so the play button can't start a second run while one is in progress.
-import type { Drone, Facing } from "./Drone";
+import type { Cell, Drone, Facing } from "./Drone";
 
 export type Command =
   | { type: "PLACE"; x: number; y: number; facing: Facing }
@@ -17,10 +17,12 @@ export type RunnerHooks = {
   onReport: (text: string) => void;
   onTakeOff: () => Promise<void>;
   onLand: () => Promise<void>;
+  onAttack: (from: Cell, to: Cell) => Promise<void>;
   waitForMotion: () => Promise<boolean>;
 };
 
-const IDLE_BEAT_MS = 500; // pause for commands with nothing to animate (ATTACK, blocked MOVE)
+const DRONE_ATTACK_IDLE_BEAT_MS = 200;
+const IDLE_BEAT_MS = 500; // pause for commands with nothing to animate (ignored ATTACK, blocked MOVE)
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 export class CommandRunner {
@@ -39,10 +41,14 @@ export class CommandRunner {
     let airborne = false;
     try {
       for (const command of commands) {
-        this.execute(command);
+        const hit = this.execute(command);
         if (!airborne && command.type === "PLACE" && this.drone.placed) {
           airborne = true;
           await this.hooks.onTakeOff();
+        } else if (hit) {
+          await sleep(DRONE_ATTACK_IDLE_BEAT_MS);
+          await this.hooks.onAttack({ x: this.drone.x, y: this.drone.y }, hit);
+          await sleep(DRONE_ATTACK_IDLE_BEAT_MS);
         } else {
           const moved = await this.hooks.waitForMotion();
           if (!moved && command.type !== "REPORT") await sleep(IDLE_BEAT_MS);
@@ -54,7 +60,9 @@ export class CommandRunner {
     }
   }
 
-  private execute(command: Command) {
+  // Returns the cell an ATTACK hit, or null for everything else (including an ignored ATTACK).
+  private execute(command: Command): Cell | null {
+    let hit: Cell | null = null;
     switch (command.type) {
       case "PLACE":
         this.drone.place(command.x, command.y, command.facing);
@@ -69,7 +77,7 @@ export class CommandRunner {
         this.drone.right();
         break;
       case "ATTACK":
-        this.drone.attack();
+        hit = this.drone.attack();
         break;
       case "REPORT": {
         const report = this.drone.report();
@@ -77,6 +85,7 @@ export class CommandRunner {
         break;
       }
     }
+    return hit;
   }
 
   private setState(state: RunnerState) {
