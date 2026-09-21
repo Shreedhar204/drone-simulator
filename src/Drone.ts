@@ -20,29 +20,31 @@ export class Drone {
   facing: Facing = "NORTH";
   placed = false;
 
-  place(x: number, y: number, facing: Facing) {
-    if (!inBounds(x, y)) return;
+  // place, move, left and right return true if the command took effect, false if it was ignored.
+  place(x: number, y: number, facing: Facing): boolean {
+    if (!inBounds(x, y)) return false;
     this.x = x;
     this.y = y;
     this.facing = facing;
     this.placed = true;
+    return true;
   }
 
-  move() {
-    if (!this.placed) return;
+  move(): boolean {
+    if (!this.placed) return false;
     const { dx, dy } = STEP[this.facing];
-    if (inBounds(this.x + dx, this.y + dy)) {
-      this.x += dx;
-      this.y += dy;
-    }
+    if (!inBounds(this.x + dx, this.y + dy)) return false;
+    this.x += dx;
+    this.y += dy;
+    return true;
   }
 
-  left() {
-    this.rotate(-1);
+  left(): boolean {
+    return this.rotate(-1);
   }
 
-  right() {
-    this.rotate(1);
+  right(): boolean {
+    return this.rotate(1);
   }
 
   // Returns the cell hit, or null if there aren't 2 free spaces ahead.
@@ -58,9 +60,10 @@ export class Drone {
     return this.placed ? `${this.x},${this.y},${this.facing}` : null;
   }
 
-  private rotate(step: number) {
-    if (!this.placed) return;
+  private rotate(step: number): boolean {
+    if (!this.placed) return false;
     const i = CARDINAL_DIRECTIONS_ORDER.indexOf(this.facing);
     this.facing = CARDINAL_DIRECTIONS_ORDER[(i + step + 4) % 4];
+    return true;
   }
 }

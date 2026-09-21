@@ -1,6 +1,7 @@
 // Runs a list of commands on the drone one step at a time and tracks idle/executing state,
 // so the play button can't start a second run while one is in progress.
 import type { Cell, Drone, Facing } from "./Drone";
+import { ATTACK_PAUSE_MS, pauseAfter, pauseBefore } from "./pacing";
 
 export type Command =
   | { type: "PLACE"; x: number; y: number; facing: Facing }
@@ -10,6 +11,14 @@ export type Command =
   | { type: "REPORT" }
   | { type: "ATTACK" };
 
+// What a command actually did, as reported by the drone's logic.
+export type Effect =
+  | { kind: "placed" }
+  | { kind: "moved" } // MOVE, LEFT or RIGHT changed the drone's position or facing
+  | { kind: "attacked"; target: Cell }
+  | { kind: "reported" }
+  | { kind: "blocked" }; // ignored: blocked MOVE, ignored ATTACK, invalid PLACE, or not placed yet
+
 export type RunnerState = "idle" | "executing";
 
 export type RunnerHooks = {
@@ -18,17 +27,23 @@ export type RunnerHooks = {
   onTakeOff: () => Promise<void>;
   onLand: () => Promise<void>;
   onAttack: (from: Cell, to: Cell) => Promise<void>;
-  waitForMotion: () => Promise<boolean>;
+  waitForMotion: () => Promise<void>;
 };
 
-const DRONE_ATTACK_IDLE_BEAT_MS = 200;
-const IDLE_BEAT_MS = 500; // pause for commands with nothing to animate (ignored ATTACK, blocked MOVE)
-const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+const PLACED: Effect = { kind: "placed" };
+const MOVED: Effect = { kind: "moved" };
+const REPORTED: Effect = { kind: "reported" };
+const BLOCKED: Effect = { kind: "blocked" };
+
+// No-op for 0, so an unpaused command stays in the same frame as the previous one.
+const sleep = (ms: number) =>
+  ms > 0 ? new Promise<void>((r) => setTimeout(r, ms)) : Promise.resolve();
 
 export class CommandRunner {
   state: RunnerState = "idle";
   private drone: Drone;
   private hooks: RunnerHooks;
+  private airborne = false;
 
   constructor(drone: Drone, hooks: RunnerHooks) {
     this.drone = drone;
@@ -38,54 +53,59 @@ export class CommandRunner {
   async run(commands: Command[]) {
     if (this.state !== "idle") return;
     this.setState("executing");
-    let airborne = false;
     try {
-      for (const command of commands) {
-        const hit = this.execute(command);
-        if (!airborne && command.type === "PLACE" && this.drone.placed) {
-          airborne = true;
-          await this.hooks.onTakeOff();
-        } else if (hit) {
-          await sleep(DRONE_ATTACK_IDLE_BEAT_MS);
-          await this.hooks.onAttack({ x: this.drone.x, y: this.drone.y }, hit);
-          await sleep(DRONE_ATTACK_IDLE_BEAT_MS);
-        } else {
-          const moved = await this.hooks.waitForMotion();
-          if (!moved && command.type !== "REPORT") await sleep(IDLE_BEAT_MS);
-        }
+      for (const [i, command] of commands.entries()) {
+        await sleep(pauseBefore(command, commands[i - 1]));
+        const effect = this.execute(command);
+        await this.animate(effect);
+        await sleep(pauseAfter(command, commands[i + 1], effect));
       }
     } finally {
-      if (airborne) await this.hooks.onLand();
+      if (this.airborne) await this.hooks.onLand();
+      this.airborne = false;
       this.setState("idle");
     }
   }
 
-  // Returns the cell an ATTACK hit, or null for everything else (including an ignored ATTACK).
-  private execute(command: Command): Cell | null {
-    let hit: Cell | null = null;
+  private execute(command: Command): Effect {
     switch (command.type) {
       case "PLACE":
-        this.drone.place(command.x, command.y, command.facing);
-        break;
+        return this.drone.place(command.x, command.y, command.facing)
+          ? PLACED
+          : BLOCKED;
       case "MOVE":
-        this.drone.move();
-        break;
+        return this.drone.move() ? MOVED : BLOCKED;
       case "LEFT":
-        this.drone.left();
-        break;
+        return this.drone.left() ? MOVED : BLOCKED;
       case "RIGHT":
-        this.drone.right();
-        break;
-      case "ATTACK":
-        hit = this.drone.attack();
-        break;
+        return this.drone.right() ? MOVED : BLOCKED;
+      case "ATTACK": {
+        const target = this.drone.attack();
+        return target ? { kind: "attacked", target } : BLOCKED;
+      }
       case "REPORT": {
         const report = this.drone.report();
         if (report) this.hooks.onReport(report);
-        break;
+        return REPORTED;
       }
     }
-    return hit;
+  }
+
+  private async animate(effect: Effect) {
+    switch (effect.kind) {
+      case "placed":
+        if (this.airborne) return this.hooks.waitForMotion(); // a re-PLACE just repositions
+        this.airborne = true;
+        return this.hooks.onTakeOff();
+      case "moved":
+        return this.hooks.waitForMotion();
+      case "attacked":
+        await sleep(ATTACK_PAUSE_MS); // aim before firing
+        return this.hooks.onAttack(
+          { x: this.drone.x, y: this.drone.y },
+          effect.target,
+        );
+    }
   }
 
   private setState(state: RunnerState) {

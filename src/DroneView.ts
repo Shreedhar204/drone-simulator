@@ -73,11 +73,11 @@ export class DroneView {
     return this.startTransition("land");
   }
 
-  // Resolves true once the drone has finished moving/turning; false straight away if there's nothing to animate.
-  waitForMotion(): Promise<boolean> {
-    if (!this.drone.placed || this.atTarget()) return Promise.resolve(false);
+  // Resolves once the drone has finished moving/turning, or straight away if there's nothing to animate.
+  waitForMotion(): Promise<void> {
+    if (!this.drone.placed || this.atTarget()) return Promise.resolve();
     return new Promise((resolve) => {
-      this.motionWaiters.push(() => resolve(true));
+      this.motionWaiters.push(resolve);
     });
   }
 
