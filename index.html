@@ -54,9 +54,19 @@
       <button id="play" class="btn" type="button" disabled>Play</button>
     </dialog>
 
-    <dialog id="place-dialog" class="dialog">
+    <dialog id="place-dialog" class="dialog dialog--place">
       <form method="dialog">
         <h3 class="dialog__title">Place drone</h3>
+        <div class="place-preview" aria-hidden="true">
+          <div class="mini-grid">
+            <div class="axis axis--y">
+              <span>9</span><span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span><span>0</span>
+            </div>
+            <div class="axis axis--x">
+              <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+            </div>
+          </div>
+        </div>
         <div class="dialog__fields">
           <label class="field">X
             <input id="place-x" type="number" inputmode="numeric" min="0" max="9" value="0" required />
@@ -73,6 +83,7 @@
             </select>
           </label>
         </div>
+        <img class="compass" aria-hidden="true" src="/src/assets/compass/compass-small.png" alt="Compass showing NORTH, EAST, SOUTH and WEST" />
         <div class="row">
           <button id="place-cancel" class="btn btn--secondary" type="button">Cancel</button>
           <button class="btn" type="submit" value="confirm">Confirm</button>
