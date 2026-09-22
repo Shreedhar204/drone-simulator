@@ -9,7 +9,7 @@ const isTurn = (command?: Command) =>
   command?.type === "LEFT" || command?.type === "RIGHT";
 
 // Pause before a command's state changes (and so before it starts animating).
-export const pauseBefore = (command: Command, previous?: Command) =>
+export const pauseBefore = (command: Command, previous: Command | undefined) =>
   isTurn(command) && !isTurn(previous) ? TURN_PAUSE_MS : 0;
 
 // Pause after a command has finished animating.
