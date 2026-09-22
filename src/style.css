@@ -313,3 +313,78 @@ textarea {
   content: "Reports will appear here";
   color: #999;
 }
+
+.help-button {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #eee;
+  background: rgb(0 0 0 / 0.55);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+}
+
+.dialog--intro {
+  width: min(92vw, 360px);
+}
+
+.intro-pages {
+  display: grid; /* stacks both pages in one cell so the dialog sizes to the tallest */
+}
+
+.intro-page {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.intro-page.is-active {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.intro-body {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #ccc;
+}
+
+.intro-body p + p {
+  margin-top: 10px;
+}
+
+.intro-list {
+  padding-left: 18px;
+}
+
+.intro-list li + li {
+  margin-top: 8px;
+}
+
+.intro-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.intro-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #444;
+}
+
+.intro-dot.is-active {
+  background: #ff5555;
+}

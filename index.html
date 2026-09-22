@@ -6,6 +6,8 @@
     <title>drone-simulator</title>
   </head>
   <body>
+    <button id="help-button" class="help-button" type="button" aria-label="Help">?</button>
+
     <div id="app">
       <div class="stage">
         <div id="grid">
@@ -89,6 +91,53 @@
           <button class="btn" type="submit" value="confirm">Confirm</button>
         </div>
       </form>
+    </dialog>
+
+    <dialog id="intro-dialog" class="dialog dialog--intro">
+      <div class="intro-pages">
+      <section class="intro-page" data-page="0">
+        <h3 class="dialog__title">Incoming transmission</h3>
+        <div class="intro-body">
+          <p>
+            You've just joined a secret drone program. Before any unit goes
+            into the field, its onboard AI has to prove itself here, on a
+            bordered 10x10 calibration grid.
+          </p>
+          <p>
+            You're the engineer. Every command you queue up — where to land,
+            which way to turn, when to move, when to strike — is a drill its
+            AI has to learn. Run it, and you're training the model, one
+            sequence at a time.
+          </p>
+          <p>
+            The grid enforces its own limits. The drone never crosses the
+            edge, and it always reports back exactly where it's standing,
+            so you can calibrate with confidence.
+          </p>
+        </div>
+      </section>
+
+      <section class="intro-page" data-page="1">
+        <h3 class="dialog__title">How it works</h3>
+        <ul class="intro-body intro-list">
+          <li><strong>Place</strong> sets the drone down — pick X, Y and a facing direction.</li>
+          <li><strong>Left</strong> / <strong>Right</strong> turns it. <strong>Move</strong> steps it forward one square.</li>
+          <li><strong>Attack</strong> fires two squares ahead — it won't fire without room.</li>
+          <li><strong>Report</strong> calls out the drone's current position.</li>
+          <li>Build a list of commands, then hit <strong>Play</strong> to watch them run, one at a time.</li>
+        </ul>
+      </section>
+      </div>
+
+      <div class="intro-dots">
+        <span class="intro-dot" data-dot="0"></span>
+        <span class="intro-dot" data-dot="1"></span>
+      </div>
+
+      <div class="row">
+        <button id="intro-back" class="btn btn--secondary" type="button" hidden>Back</button>
+        <button id="intro-next" class="btn" type="button">Next</button>
+      </div>
     </dialog>
 
     <script type="module" src="/src/main.ts"></script>

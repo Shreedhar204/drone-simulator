@@ -9,8 +9,11 @@ import { AttackView } from "./AttackView";
 import { CommandRunner } from "./CommandRunner";
 import { ControlPanel } from "./ControlPanel";
 import { ReportLog } from "./ReportLog";
+import { IntroDialog } from "./IntroDialog";
 
 async function main() {
+  new IntroDialog();
+
   const app = new Application();
   await app.init({
     width: GRID_SIZE * CELL,
