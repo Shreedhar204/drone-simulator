@@ -8,7 +8,14 @@
   <body>
     <div id="app">
       <div class="stage">
-        <div id="grid"></div>
+        <div id="grid">
+          <div class="axis axis--y" aria-hidden="true">
+            <span>9</span><span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span><span>0</span>
+          </div>
+          <div class="axis axis--x" aria-hidden="true">
+            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+          </div>
+        </div>
         <section class="report">
           <h2 class="group__label">Report</h2>
           <div id="report-log" class="report__log" role="log" aria-label="Drone reports"></div>
@@ -24,6 +31,15 @@
       </div>
 
       <div class="group">
+        <label class="group__label" for="program">Program</label>
+        <textarea id="program" class="program" readonly placeholder="Place the drone to start"></textarea>
+        <div class="group__actions">
+          <button id="delete" class="btn btn--secondary btn--small" type="button" disabled>Delete last</button>
+          <button id="clear" class="btn btn--secondary btn--small" type="button" disabled>Clear</button>
+        </div>
+      </div>
+
+      <div class="group">
         <h3 class="group__label">Commands</h3>
         <div class="cmd-grid">
           <button id="place" class="btn btn--secondary" type="button">Place</button>
@@ -33,17 +49,6 @@
           <button id="cmd-move" class="btn btn--secondary" type="button" disabled>Move</button>
           <button id="cmd-right" class="btn btn--secondary" type="button" disabled>Right</button>
         </div>
-      </div>
-
-      <div class="group">
-        <div class="group__head">
-          <label class="group__label" for="program">Program</label>
-          <div class="group__actions">
-            <button id="delete" class="btn btn--secondary btn--small" type="button" disabled>Delete last</button>
-            <button id="clear" class="btn btn--secondary btn--small" type="button" disabled>Clear</button>
-          </div>
-        </div>
-        <textarea id="program" class="program" readonly placeholder="Place the drone to start"></textarea>
       </div>
 
       <button id="play" class="btn" type="button" disabled>Play</button>
