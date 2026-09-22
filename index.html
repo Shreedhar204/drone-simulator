@@ -7,12 +7,14 @@
   </head>
   <body>
     <div id="app">
-      <div id="grid"></div>
+      <div class="stage">
+        <div id="grid"></div>
+        <section class="report">
+          <h2 class="group__label">Report</h2>
+          <div id="report-log" class="report__log" role="log" aria-label="Drone reports"></div>
+        </section>
+      </div>
       <button id="open-panel" class="btn" type="button">Control Panel</button>
-      <section class="report">
-        <h2 class="group__label">Report</h2>
-        <div id="report-log" class="report__log" role="log" aria-label="Drone reports"></div>
-      </section>
     </div>
 
     <dialog id="control-dialog" class="dialog dialog--panel">

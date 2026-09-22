@@ -6,7 +6,7 @@ import { GRID_SIZE, CELL } from "./config";
 const SIZE = GRID_SIZE * CELL;
 // a dark halo under a light line keeps the grid readable on any background
 const HALO = { width: 4, color: 0x000000, alpha: 0.4 };
-const LINE = { width: 2, color: 0x9be7ff, alpha: 0.9 };
+const LINE = { width: 2, color: 0xffffff, alpha: 0.9 };
 
 export class GridView {
   readonly display = new Graphics();
