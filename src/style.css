@@ -165,6 +165,15 @@ textarea {
   height: 9rem;
   resize: none;
   font-family: ui-monospace, monospace;
+  color: #7fffa0;
+  background: #05100a;
+  border-color: #1c3a24;
+  text-shadow: 0 0 4px rgb(127 255 160 / 0.5);
+}
+
+.program::placeholder {
+  color: #3a6b48;
+  text-shadow: none;
 }
 
 .btn {
@@ -177,6 +186,15 @@ textarea {
   border: 0;
   border-radius: 8px;
   cursor: pointer;
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
+
+.btn:not(:disabled):hover {
+  filter: brightness(1.1);
+}
+
+.btn:not(:disabled):active {
+  transform: scale(0.96);
 }
 
 .btn:disabled {
@@ -207,6 +225,21 @@ textarea {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
+}
+
+.cmd-grid .btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.btn__icon {
+  width: 18px;
+  height: 18px;
 }
 
 .row {
@@ -318,11 +351,14 @@ textarea {
   overflow-y: auto;
   white-space: pre-line;
   font-family: ui-monospace, monospace;
+  color: #7fffa0;
+  text-shadow: 0 0 4px rgb(127 255 160 / 0.5);
 }
 
 .report__log:empty::before {
   content: "Reports will appear here";
-  color: #999;
+  color: #3a6b48;
+  text-shadow: none;
 }
 
 .help-button {
@@ -398,4 +434,48 @@ textarea {
 
 .intro-dot.is-active {
   background: #ff5555;
+}
+
+/* Desktop: grid and the report/button cluster sit side by side instead of stacked.
+   Mobile rules above are untouched — this only takes effect above the breakpoint. */
+@media (min-width: 900px) {
+  #app {
+    grid-template-rows: 400px; /* fixed to match #grid's size, so the cluster stretches to exactly this */
+    grid-template-columns: auto auto;
+    align-items: stretch; /* grid and the cluster now share the same top/bottom edges */
+    align-content: center; /* centers the row itself within the full viewport height */
+    justify-content: center;
+    column-gap: 24px;
+    max-width: 1100px;
+    margin-inline: auto;
+    padding: 12px 32px;
+  }
+
+  #grid {
+    grid-row: auto;
+    grid-column: 1;
+  }
+
+  /* report's top lines up with the grid's top, and it grows to push the button
+     down to the grid's bottom edge */
+  .bottom-cluster {
+    grid-row: auto;
+    grid-column: 2;
+    width: min(320px, 40vw);
+  }
+
+  .bottom-cluster .report {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .bottom-cluster .report__log {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+  }
+
+  .bottom-cluster #open-panel {
+    flex-shrink: 0;
+  }
 }
