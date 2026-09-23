@@ -357,7 +357,7 @@ textarea {
 
 .report__log:empty::before {
   content: "Reports will appear here";
-  color: #3a6b48;
+  color: #999;
   text-shadow: none;
 }
 
