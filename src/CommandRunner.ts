@@ -1,5 +1,3 @@
-// Runs a list of commands on the drone one step at a time and tracks idle/executing state,
-// so the play button can't start a second run while one is in progress.
 import type { Cell, Drone, Facing } from "./Drone";
 import { ATTACK_PAUSE_MS, pauseAfter, pauseBefore } from "./pacing";
 

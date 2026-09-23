@@ -1,4 +1,3 @@
-// Draws the ATTACK effect: a laser bolt flying to the target cell, then the explosion. Rendering only.
 import {
   AnimatedSprite,
   Assets,

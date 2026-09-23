@@ -1,4 +1,3 @@
-// Draws the drone sprite (still or spinning) and eases it toward the Drone's state. Rendering only.
 import { Assets, Sprite } from "pixi.js";
 import type { Texture } from "pixi.js";
 import { CELL } from "./config";
@@ -110,10 +109,7 @@ export class DroneView {
       this.display.y += (dy / distance) * step;
     }
 
-    const diff = Math.atan2(
-      Math.sin(rotation - this.display.rotation),
-      Math.cos(rotation - this.display.rotation),
-    );
+    const diff = this.angleDiff(rotation);
     const turn = TURN_SPEED * seconds;
     if (Math.abs(diff) <= turn) this.display.rotation = rotation;
     else this.display.rotation += Math.sign(diff) * turn;
@@ -125,13 +121,17 @@ export class DroneView {
 
   private atTarget() {
     const { x, y, rotation } = this.target();
-    const diff = Math.atan2(
-      Math.sin(rotation - this.display.rotation),
-      Math.cos(rotation - this.display.rotation),
-    );
     return (
       Math.hypot(x - this.display.x, y - this.display.y) < 0.01 &&
-      Math.abs(diff) < 0.001
+      Math.abs(this.angleDiff(rotation)) < 0.001
+    );
+  }
+
+  // Shortest signed distance (in radians) from the display's current rotation to a target angle.
+  private angleDiff(target: number) {
+    return Math.atan2(
+      Math.sin(target - this.display.rotation),
+      Math.cos(target - this.display.rotation),
     );
   }
 

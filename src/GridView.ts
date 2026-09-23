@@ -1,4 +1,3 @@
-// Draws the grid lines. Rendering only, no game state.
 import { Graphics } from "pixi.js";
 import type { StrokeStyle } from "pixi.js";
 import { GRID_SIZE, CELL } from "./config";

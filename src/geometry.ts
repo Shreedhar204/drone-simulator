@@ -1,4 +1,3 @@
-// Grid-to-canvas conversion in one place, so the y-flip isn't repeated across views.
 import { GRID_SIZE, CELL } from "./config";
 
 // Centre of a cell in canvas pixels. Cell y grows north but canvas y grows down, hence the flip.

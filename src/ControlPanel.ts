@@ -1,4 +1,3 @@
-// Wires the control panel DOM (panel + place dialogs, buttons, program box) and builds the command list from user input.
 import type { Command } from "./CommandRunner";
 import type { Facing } from "./Drone";
 

@@ -1,4 +1,3 @@
-// Wires the intro/help dialog: a short multi-page briefing shown once on first visit and reopenable via the ? button.
 const byId = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const SEEN_KEY = "drone-simulator:intro-seen";
 

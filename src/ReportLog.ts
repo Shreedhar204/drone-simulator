@@ -1,4 +1,3 @@
-// Shows REPORT output in the scrollable card under the grid. Owns that DOM only, no game logic.
 export class ReportLog {
   private log = document.getElementById("report-log") as HTMLElement;
 

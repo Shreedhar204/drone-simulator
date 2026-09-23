@@ -1,4 +1,3 @@
-// The timing rules for a run: when to pause around each command. Pure functions, so they are easy to tune and test.
 import type { Command, Effect } from "./CommandRunner";
 
 const TURN_PAUSE_MS = 200; // pause before and after a run of turns, so rotating feels deliberate

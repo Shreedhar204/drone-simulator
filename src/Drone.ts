@@ -1,4 +1,3 @@
-// Pure drone logic (state + rules). No Pixi or DOM, so it's testable and independent of visuals.
 import { GRID_SIZE } from "./config";
 
 export type Facing = "NORTH" | "EAST" | "SOUTH" | "WEST";

@@ -1,4 +1,3 @@
-// Entry point: creates the app and wires the drone, views, runner and control panel together.
 import "./style.css";
 import { Application } from "pixi.js";
 import { GRID_SIZE, CELL } from "./config";
@@ -46,14 +45,6 @@ async function main() {
     waitForMotion: () => droneView.waitForMotion(),
   });
   const panel = new ControlPanel((commands) => runner.run(commands));
-
-  // window.addEventListener("keydown", (e) => {
-  //   if (e.key === "ArrowUp") drone.move();
-  //   if (e.key === "ArrowLeft") drone.left();
-  //   if (e.key === "ArrowRight") drone.right();
-  //   if (e.key === " ") drone.attack();
-  //   droneView.render();
-  // });
 
   app.ticker.add((ticker) => {
     droneView.update(ticker.deltaMS);
