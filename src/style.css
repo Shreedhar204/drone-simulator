@@ -244,15 +244,15 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  padding: 0 20px 20px; /* room for the axis labels outside the mini-grid's own box */
   margin-bottom: 16px;
 }
 
 .mini-grid {
   position: relative;
-  width: 220px;
-  height: 220px;
-  margin: 0 20px 16px;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 1 / 1;
   background-color: #141414;
   background-image:
     repeating-linear-gradient(
@@ -265,7 +265,7 @@ textarea {
       rgb(255 255 255 / 0.5) 0 1px,
       transparent 1px 10%
     );
-  border: 1px solid #333;
+  border: 1px solid rgb(255 255 255 / 0.5); /* matches the gridlines, which stop short of the 100% edge */
   border-radius: 4px;
 }
 

@@ -120,11 +120,12 @@
       <section class="intro-page" data-page="1">
         <h3 class="dialog__title">How it works</h3>
         <ul class="intro-body intro-list">
-          <li><strong>Place</strong> sets the drone down — pick X, Y and a facing direction.</li>
-          <li><strong>Left</strong> / <strong>Right</strong> turns it. <strong>Move</strong> steps it forward one square.</li>
-          <li><strong>Attack</strong> fires two squares ahead — it won't fire without room.</li>
-          <li><strong>Report</strong> calls out the drone's current position.</li>
-          <li>Build a list of commands, then hit <strong>Play</strong> to watch them run, one at a time.</li>
+          <li><strong>Place</strong> sets the drone down on the grid at an X, Y position, facing north, south, east or west. Nothing else works until it's placed.</li>
+          <li><strong>Left</strong> and <strong>Right</strong> rotate the drone 90° on the spot — its position doesn't change.</li>
+          <li><strong>Move</strong> steps the drone forward one square in the direction it's facing. It's blocked from stepping off the edge of the grid.</li>
+          <li><strong>Attack</strong> fires two squares ahead in the direction it's facing. If there isn't clear space for both squares, the attack is skipped.</li>
+          <li><strong>Report</strong> announces the drone's current X, Y position and the direction it's facing.</li>
+          <li>Build a list of commands, then hit <strong>Play</strong> to run them in order, one at a time.</li>
         </ul>
       </section>
       </div>
