@@ -100,11 +100,12 @@ export class DroneView {
     if (distance > SNAP_DISTANCE) return this.snap();
 
     const seconds = deltaMS / 1000;
-    const step = MOVE_SPEED * seconds;
+    const step = MOVE_SPEED * seconds; // how far it can travel this frame
     if (distance <= step) {
       this.display.x = x;
       this.display.y = y;
     } else {
+      // dx and dy point toward the target; shrink them down to a single step's length and move that far
       this.display.x += (dx / distance) * step;
       this.display.y += (dy / distance) * step;
     }
@@ -121,13 +122,14 @@ export class DroneView {
 
   private atTarget() {
     const { x, y, rotation } = this.target();
+    // "close enough" instead of an exact match — decimal math almost never lands on the exact target number
     return (
       Math.hypot(x - this.display.x, y - this.display.y) < 0.01 &&
       Math.abs(this.angleDiff(rotation)) < 0.001
     );
   }
 
-  // Shortest signed distance (in radians) from the display's current rotation to a target angle.
+  // how far the drone still needs to turn to reach the target angle, picking whichever direction (left or right) is shorter.
   private angleDiff(target: number) {
     return Math.atan2(
       Math.sin(target - this.display.rotation),
@@ -144,12 +146,13 @@ export class DroneView {
   private advanceTransition(deltaMS: number) {
     const t = this.transition!;
     t.elapsed += deltaMS;
-    const ease = (p: number) => 1 - (1 - p) ** 3;
+    const ease = (p: number) => 1 - (1 - p) ** 3; // starts fast, then slows down as it finishes, instead of a constant speed
     const setScale = (s: number) => this.display.scale.set(this.fullScale * s);
 
     if (t.kind === "takeoff") {
       if (t.elapsed < STILL_HOLD_MS) return;
       this.display.texture = this.spinning;
+      // how far through growing back to full size we are: 0 = just started, 1 = done — only once both pauses have passed
       const p = Math.min(
         Math.max((t.elapsed - STILL_HOLD_MS - SPIN_HOLD_MS) / SCALE_MS, 0),
         1,
@@ -157,7 +160,7 @@ export class DroneView {
       setScale(LANDED_SCALE + (1 - LANDED_SCALE) * ease(p));
       if (p < 1) return;
     } else {
-      const p = Math.min(t.elapsed / SCALE_MS, 1);
+      const p = Math.min(t.elapsed / SCALE_MS, 1); // how far through shrinking down we are: 0 = just started, 1 = done
       setScale(1 - (1 - LANDED_SCALE) * ease(p));
       if (t.elapsed < SCALE_MS + SPIN_HOLD_MS) return;
       this.display.texture = this.still;

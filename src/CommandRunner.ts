@@ -33,7 +33,7 @@ const MOVED: Effect = { kind: "moved" };
 const REPORTED: Effect = { kind: "reported" };
 const BLOCKED: Effect = { kind: "blocked" };
 
-// No-op for 0, so an unpaused command stays in the same frame as the previous one.
+// sleep(0) returns immediately instead of waiting a real tick, so back-to-back unpaused commands don't stutter.
 const sleep = (ms: number) =>
   ms > 0 ? new Promise<void>((r) => setTimeout(r, ms)) : Promise.resolve();
 
@@ -92,13 +92,13 @@ export class CommandRunner {
   private async animate(effect: Effect) {
     switch (effect.kind) {
       case "placed":
-        if (this.airborne) return this.hooks.waitForMotion(); // a re-PLACE just repositions
+        if (this.airborne) return this.hooks.waitForMotion(); // a re-PLACE
         this.airborne = true;
         return this.hooks.onTakeOff();
       case "moved":
         return this.hooks.waitForMotion();
       case "attacked":
-        await sleep(ATTACK_PAUSE_MS); // aim before firing
+        await sleep(ATTACK_PAUSE_MS); // pause before firing
         return this.hooks.onAttack(
           { x: this.drone.x, y: this.drone.y },
           effect.target,

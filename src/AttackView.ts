@@ -16,7 +16,7 @@ type Point = { x: number; y: number };
 
 const COLUMNS = 3;
 const ROWS = 2;
-const LASER_SIZE = CELL * 1.25; // includes the soft glow around the bolt
+const LASER_SIZE = CELL * 1.25; // includes the soft glow around the laser sprite
 const LASER_SPEED = CELL * 10; // pixels per second
 const LASER_ROTATION_OFFSET = 0; // the sprite's round end is assumed to be its front, facing right
 const EXPLOSION_SIZE = CELL * 2;
@@ -78,6 +78,7 @@ export class AttackView {
     const start = cellCenter(from.x, from.y);
     const end = cellCenter(to.x, to.y);
     this.laser.position.set(start.x, start.y);
+    // angle of the line from start to end, so the laser sprite points at the target
     this.laser.rotation =
       Math.atan2(end.y - start.y, end.x - start.x) + LASER_ROTATION_OFFSET;
     this.laser.visible = true;
@@ -95,10 +96,12 @@ export class AttackView {
       flight.end.x - flight.start.x,
       flight.end.y - flight.start.y,
     );
+    // how much of the flight is done so far, out of the total distance to cover, based on speed and time passed
     const progress = Math.min(
       ((flight.elapsed / 1000) * LASER_SPEED) / distance,
       1,
     );
+    // move that fraction of the way from start to end (0 = still at start, 1 = arrived at end)
     this.laser.position.set(
       flight.start.x + (flight.end.x - flight.start.x) * progress,
       flight.start.y + (flight.end.y - flight.start.y) * progress,
