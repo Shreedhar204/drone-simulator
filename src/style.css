@@ -6,7 +6,8 @@
 
 body {
   margin: 0;
-  background: #0f1a0a url("./assets/background/drone-background.jpg") center / cover no-repeat;
+  background: #0f1a0a url("./assets/background/drone-background.jpg") center /
+    cover no-repeat;
   color: #eee;
   font-family: system-ui, sans-serif;
 }
@@ -14,23 +15,26 @@ body {
 #app {
   --board: min(100%, 400px);
   height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px 32px; /* extra bottom room so the button sits above the edge */
+  display: grid;
+  grid-template-rows: 1fr minmax(0, auto) 1fr; /* equal fr rows put #grid exactly at vertical center */
+  justify-items: center;
+  padding: 12px 16px;
   overflow: hidden; /* safety net against scrolling */
 }
 
-#open-panel {
+#grid {
+  position: relative;
+  grid-row: 2;
+  align-self: center;
   width: var(--board);
-  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+  min-height: 0; /* lets it shrink to fit if the viewport is short */
+  margin-bottom: 19px; /* room for the x-axis labels below the grid */
 }
 
-/* fills the space above the button and centers grid+report together within it */
-.stage {
-  flex: 1;
-  min-height: 0;
+/* everything else, centered as its own group in the remaining space below the grid */
+.bottom-cluster {
+  grid-row: 3;
   width: var(--board);
   display: flex;
   flex-direction: column;
@@ -39,12 +43,10 @@ body {
   gap: 12px;
 }
 
-#grid {
-  position: relative;
+.bottom-cluster .report,
+.bottom-cluster #open-panel {
   width: 100%;
-  aspect-ratio: 1 / 1; /* lets flexbox shrink it (not the report) when the stage is short on room */
-  min-height: 0;
-  margin-bottom: 16px; /* room for the x-axis labels below the grid */
+  flex-shrink: 0;
 }
 
 #grid canvas {
@@ -253,8 +255,16 @@ textarea {
   margin: 0 20px 16px;
   background-color: #141414;
   background-image:
-    repeating-linear-gradient(to right, rgb(255 255 255 / 0.5) 0 1px, transparent 1px 10%),
-    repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.5) 0 1px, transparent 1px 10%);
+    repeating-linear-gradient(
+      to right,
+      rgb(255 255 255 / 0.5) 0 1px,
+      transparent 1px 10%
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0.5) 0 1px,
+      transparent 1px 10%
+    );
   border: 1px solid #333;
   border-radius: 4px;
 }

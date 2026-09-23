@@ -9,21 +9,21 @@
     <button id="help-button" class="help-button" type="button" aria-label="Help">?</button>
 
     <div id="app">
-      <div class="stage">
-        <div id="grid">
-          <div class="axis axis--y" aria-hidden="true">
-            <span>9</span><span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span><span>0</span>
-          </div>
-          <div class="axis axis--x" aria-hidden="true">
-            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
-          </div>
+      <div id="grid">
+        <div class="axis axis--y" aria-hidden="true">
+          <span>9</span><span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span><span>0</span>
         </div>
+        <div class="axis axis--x" aria-hidden="true">
+          <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+        </div>
+      </div>
+      <div class="bottom-cluster">
         <section class="report">
           <h2 class="group__label">Report</h2>
           <div id="report-log" class="report__log" role="log" aria-label="Drone reports"></div>
         </section>
+        <button id="open-panel" class="btn" type="button">Control Panel</button>
       </div>
-      <button id="open-panel" class="btn" type="button">Control Panel</button>
     </div>
 
     <dialog id="control-dialog" class="dialog dialog--panel">
