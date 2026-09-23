@@ -35,9 +35,11 @@ npm test
   still work normally.
 - **Source maps** are enabled in the production build (`vite.config.ts`) and are publicly
   reachable on the hosted deployment.
-- Built mobile-first; the interface is capped to fit the viewport with no page scrolling.
-- **Tests:** Jest unit tests in `src/Drone.test.ts` cover the drone's rules — boundary
-  rejection, discard-before-a-valid-PLACE, ATTACK's "2 free spaces" rule, rotation,
-  and the spec's own worked examples.
+- **Built mobile-first**, with a dedicated side-by-side layout above ~900px for desktop;
+  the interface is capped to fit the viewport with no page scrolling on either.
+- **Tests:**Jest unit tests across `Drone.test.ts`, `CommandRunner.test.ts` and
+  `pacing.test.ts` — the drone's rules (boundary rejection, discard-before-a-valid-PLACE,
+  ATTACK's "2 free spaces" rule, rotation), the run/pacing state machine, and the spec's
+  own worked examples.
 - **Assets:** the arena background, drone sprites, explosion sequence and compass
   graphics are AI-generated for this project. The projectile graphic is not.
